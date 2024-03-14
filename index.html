@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Search Chat</title>
+    <style>
+        .chat-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            max-width: 500px;
+            overflow-y: auto;
+            height: 300px; /* Adjust as needed */
+        }
+        .chat-message {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>PDF Search Chat</h1>
+    <div class="chat-container" id="chat-container">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <input type="text" id="question" placeholder="Type your question...">
+    <button id="ask-btn">Ask</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#ask-btn").click(function () {
+                var question = $("#question").val().trim();
+                if (question !== "") {
+                    displayMessage("You: " + question);
+                    askQuestion(question);
+                    $("#question").val("");
+                }
+            });
+
+            function askQuestion(question) {
+                $.ajax({
+                    url: "search.php",
+                    type: "POST",
+                    data: { question: question },
+                    success: function (response) {
+                        displayMessage("GPT: " + response);
+                    },
+                    error: function () {
+                        displayMessage("Error occurred while processing your request.");
+                    }
+                });
+            }
+
+            function displayMessage(message) {
+                var chatContainer = $("#chat-container");
+                var chatMessage = $("<div class='chat-message'></div>").text(message);
+                chatContainer.append(chatMessage);
+                chatContainer.scrollTop(chatContainer[0].scrollHeight); // Scroll to bottom
+            }
+        });
+    </script>
+</body>
+</html>
